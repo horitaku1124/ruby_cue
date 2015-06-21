@@ -1,24 +1,35 @@
 
 class CueWorker
-  @@socket
   @@ownThread
-  def initialize(socket)
-    @@socket = socket
+  @@schedule = []
+  def initialize()
+  end
+  def addTask(taks)
+    @@schedule << taks
   end
   def start
-    @@ownThread = Thread.new(@@socket) do |sock|
-      sock.puts "Hello\r\n"
-      
-      while buf = sock.gets
-        buf = buf.gsub(/\r|\n/, "")
-        if buf == "quit"
-          sock.puts "Bye."
-          break
+    @@ownThread = Thread.new do
+      puts "Hello\r\n"
+      begin
+        while true
+          sleep 1
+          len = @@schedule.length
+          #puts "check #{len}"
+          @@schedule.length.times do |i|
+            task = @@schedule[i]
+            if task != nil && task.exe_at < Time.now
+              work = Thread.new do
+                p task.exe_at
+                sh = task.exe_path
+                p `#{sh}`
+              end
+              @@schedule[i] = nil
+            end
+          end
         end
-        sock.print system(buf)
+      rescue => e
+        p e
       end
-
-      sock.close
     end
   end
 end
