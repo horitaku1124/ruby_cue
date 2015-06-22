@@ -29,18 +29,22 @@ class CueServer
           if mode == "post"
             task = CueTask.new(timeStr, filePath)
             worker.addTask(task)
+            sock.write("job at 1\n")
+            puts "*added."
             break
+          else
+            sock.write("command error\n")
+            puts "*error."
           end
         else
           sock.write("command error.\n")
+          puts "*error."
           break
         end
       end
       sock.flush
       sock.close
       puts "*closed."
-      # worder = CueWorker.new(sock)
-      # worder.start
     end
   end
 end
