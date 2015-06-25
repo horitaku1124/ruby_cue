@@ -2,33 +2,50 @@
 class CueWorker
   @@ownThread
   @@schedule = []
-  def initialize()
+  @@mutex
+  @@uniqueId
+  def initialize
+    @@mutex = Mutex.new
+    @@uniqueId = 0
+  end
+  def nextId
+    @@uniqueId
   end
   def addTask(taks)
-    @@schedule << taks
+    id = 0
+    @@mutex.synchronize {
+      @@schedule << taks
+      @@uniqueId += 1
+      id = @@uniqueId
+    }
+    id
   end
   def start
     @@ownThread = Thread.new do
-      puts "Hello\r\n"
+      puts "Hello Worker\r\n"
       begin
         while true
           sleep 1
-          len = @@schedule.length
-          #puts "check #{len}"
-          @@schedule.length.times do |i|
-            task = @@schedule[i]
-            if task != nil && task.exe_at < Time.now
-              work = Thread.new do
-                p task.exe_at
-                sh = task.exe_path
-                p `#{sh}`
-              end
-              @@schedule[i] = nil
-            end
-          end
+          @@mutex.synchronize {
+            tick
+          }
         end
       rescue => e
         p e
+      end
+    end
+  end
+  def tick
+    len = @@schedule.length
+    len.times do |i|
+      task = @@schedule[i]
+      if task != nil && task.exe_at < Time.now
+        work = Thread.new do
+          p task.exe_at
+          sh = task.exe_path
+          p `#{sh}`
+        end
+        @@schedule[i] = nil
       end
     end
   end

@@ -55,5 +55,5 @@ if filePath && exeAt
 elsif !filePath
   raise "-f option is missing"
 elsif !exeAt
-  raise "timestamp is missing"
+  raise "timestamp is missing => [[CC]YY]MMDDhhmm"
 end

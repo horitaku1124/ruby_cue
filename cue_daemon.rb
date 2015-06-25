@@ -1,6 +1,5 @@
 #!/usr/bin/ruby
 
-
 if ARGV.length == 0
   puts "Usage:) pidfile"
   exit(1)

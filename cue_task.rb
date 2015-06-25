@@ -1,6 +1,6 @@
 
 class CueTask
-  @@id
+  attr_accessor :id
   @@name
   attr_reader :exe_at
   attr_reader :exe_path
