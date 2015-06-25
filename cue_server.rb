@@ -17,34 +17,39 @@ class CueServer
     while true
       sock = tcp.accept
       puts "*accepted."
-      while buf = sock.gets
-        command = buf.strip
-        p command
-        if command == "\04" then break end
+      begin
+        while buf = sock.gets
+          command = buf.strip
+          p command
+          if command == "\04" then break end
 
-        if command =~ /\A(POST) (\d{14}) (.+)\z/
-          mode = $1.downcase
-          timeStr = $2
-          filePath = $3
-          if mode == "post"
-            task = CueTask.new(timeStr, filePath)
-            worker.addTask(task)
-            sock.write("job at 1\n")
-            puts "*added."
-            break
+          if command =~ /\A(POST) (\d{14}) (.+)\z/
+            mode = $1.downcase
+            timeStr = $2
+            filePath = $3
+            if mode == "post"
+              task = CueTask.new(timeStr, filePath)
+              task.id = worker.addTask(task)
+              sock.puts "job at #{task.id}"
+              puts "*added."
+              break
+            else
+              sock.write("command error\n")
+              puts "*error."
+            end
           else
-            sock.write("command error\n")
+            sock.write("command error.\n")
             puts "*error."
+            break
           end
-        else
-          sock.write("command error.\n")
-          puts "*error."
-          break
         end
+        sock.flush
+        sock.close
+        puts "*closed."
+      rescue => e
+        p e
+        p e.backtrace
       end
-      sock.flush
-      sock.close
-      puts "*closed."
     end
   end
 end

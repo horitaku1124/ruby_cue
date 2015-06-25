@@ -39,8 +39,8 @@ if filePath && exeAt
   begin
     Timeout.timeout(2, Timeout::Error) {
       sock = TCPSocket.open(HOST, PORT)
-      sock.write("POST 20#{exeAt}00 #{filePath}")
-      sock.flush
+      sock.puts "POST 20#{exeAt}00 #{filePath}"
+      puts 'sock.get'
       res = sock.gets
       p res
     }
