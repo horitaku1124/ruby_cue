@@ -1,3 +1,5 @@
+# coding: utf-8
+
 require "socket"
 require "./cue_worker.rb"
 require "./cue_task.rb"
