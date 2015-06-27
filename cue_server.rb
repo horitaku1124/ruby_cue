@@ -29,37 +29,22 @@ class CueServer
             mode = $1.downcase
             timeStr = $2
             filePath = $3
-            if mode == "post"
-              task = CueTask.new(timeStr, filePath)
-              task.id = worker.addTask(task)
-              sock.puts "job at #{task.id}"
-              puts "*added."
-              break
-            else
-              sock.write("command error\n")
-              puts "*error."
-            end
+            task = CueTask.new(timeStr, filePath)
+            task.id = worker.addTask(task)
+            sock.puts "job at #{task.id}"
+            puts "*added."
+            break
           elsif command =~ /\A(GET)\z/
             mode = $1.downcase
-            if mode == "get"
-              list = worker.waintingQue
-              sock.puts list.length
-              list.length.times do |i|
-                sock.puts list[i]
-              end
-            else
-              sock.write("command error\n")
-              puts "*error."
+            list = worker.waintingQue
+            sock.puts list.length
+            list.length.times do |i|
+              sock.puts list[i]
             end
           elsif command =~ /\A(DELETE) (\d+)\z/
             mode = $1.downcase
             atId = $2.to_i
-            if mode == "delete"
-              worker.deleteTask atId
-            else
-              sock.write("command error\n")
-              puts "*error."
-            end
+            worker.deleteTask atId
           else
             sock.write("command error.\n")
             puts "*error."
