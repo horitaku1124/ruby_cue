@@ -39,6 +39,27 @@ class CueServer
               sock.write("command error\n")
               puts "*error."
             end
+          elsif command =~ /\A(GET)\z/
+            mode = $1.downcase
+            if mode == "get"
+              list = worker.waintingQue
+              sock.puts list.length
+              list.length.times do |i|
+                sock.puts list[i]
+              end
+            else
+              sock.write("command error\n")
+              puts "*error."
+            end
+          elsif command =~ /\A(DELETE) (\d+)\z/
+            mode = $1.downcase
+            atId = $2.to_i
+            if mode == "delete"
+              worker.deleteTask atId
+            else
+              sock.write("command error\n")
+              puts "*error."
+            end
           else
             sock.write("command error.\n")
             puts "*error."

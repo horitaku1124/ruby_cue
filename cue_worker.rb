@@ -50,4 +50,28 @@ class CueWorker
       end
     end
   end
+  def waintingQue
+    str = []
+    len = @@schedule.length
+    len.times do |i|
+      task = @@schedule[i]
+      if task != nil && task.exe_at > Time.now
+        str << "#{task.id} - #{task.exe_at}\n"
+      end
+    end
+    str
+  end
+
+  def deleteTask(atId)
+    @@mutex.synchronize {
+      len = @@schedule.length
+      len.times do |i|
+        task = @@schedule[i]
+        if task == nil then next end
+        if task.id == atId
+          @@schedule[i] = nil
+        end
+      end
+    }
+  end
 end
