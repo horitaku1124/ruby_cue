@@ -1,18 +1,22 @@
 #!/bin/sh
 
-service=/root/cue_daemon.rb
-pidfile=/root/rubycue.pid
+service=/usr/local/bin/ruby_cue/cue_start.sh
+pidfile=/tmp/rubycue.pid
+
+. /etc/init.d/functions
 
 case "$1" in
   start)
-     $service $pidfile
-     RETVAL=$?
+#     $service $pidfile
+#     RETVAL=$?
+     daemon $service
      echo "Started service"
      ;;
   stop)
      kill `cat $pidfile`
-     RETVAL=$?
-     rm -f $pidfile
+#     RETVAL=$?
+#     rm -f $pidfile
+     killproc $service
      echo "Stopped service"
      ;;
   status)
