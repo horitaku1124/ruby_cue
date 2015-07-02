@@ -5,9 +5,11 @@ class CueWorker
   @@schedule = []
   @@mutex
   @@uniqueId
-  def initialize
+  @@logDist
+  def initialize(logDist)
     @@mutex = Mutex.new
     @@uniqueId = 0
+    @@logDist = logDist
   end
   def nextId
     @@uniqueId
@@ -42,9 +44,22 @@ class CueWorker
       task = @@schedule[i]
       if task != nil && task.exe_at < Time.now
         work = Thread.new do
-          p task.exe_at
-          sh = task.exe_path
-          p `#{sh}`
+          begin
+            log = File.open(@@logDist + "/cue_#{task.id}", "w")
+            sh = task.exe_path
+
+            log.puts task.exe_at
+            log.puts sh
+
+            log.puts `#{sh}`
+          rescue => e
+            p e
+          ensure
+            if log
+              log.puts "end"
+              log.close
+            end
+          end
         end
         @@schedule[i] = nil
       end

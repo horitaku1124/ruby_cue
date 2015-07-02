@@ -4,16 +4,20 @@ require "socket"
 require "./cue_worker.rb"
 require "./cue_task.rb"
 
+HOST = "localhost"
+PORT = 20000
+LOG_DIST = "/var/log/ruby_cue"
+
 class CueServer
   def run
-    tcp = TCPServer.open(20000)
+    tcp = TCPServer.open(PORT)
     Signal.trap(:INT) do
       puts "Shutting down...."
       tcp.close
       exit(0)
     end
     puts "start server"
-    worker = CueWorker.new
+    worker = CueWorker.new LOG_DIST
     worker.start
 
     while true
