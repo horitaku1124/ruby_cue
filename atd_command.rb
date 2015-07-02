@@ -2,7 +2,7 @@
 # coding: utf-8
 
 require "socket"
-require "Timeout"
+#require "Timeout"
 
 HOST = "localhost"
 PORT = 20000
@@ -38,13 +38,13 @@ if filePath && exeAt
   puts "ok"
   sock = nil
   begin
-    Timeout.timeout(2, Timeout::Error) {
+    #Timeout.timeout(2, Timeout::Error) {
       sock = TCPSocket.open(HOST, PORT)
       sock.puts "POST 20#{exeAt}00 #{filePath}"
       puts 'sock.get'
       res = sock.gets
       p res
-    }
+    #}
   rescue => e
     puts "timed out"
   ensure
