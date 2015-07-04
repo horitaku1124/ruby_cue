@@ -2,7 +2,7 @@
 # coding: utf-8
 
 require "socket"
-require "Timeout"
+#require "Timeout"
 
 HOST = "localhost"
 PORT = 20000
@@ -25,10 +25,10 @@ ARGV.length.times do |i|
 end
 
 if atId
-  Timeout.timeout(2, Timeout::Error) {
+  #Timeout.timeout(2, Timeout::Error) {
     sock = TCPSocket.open(HOST, PORT)
     sock.puts "DELETE #{atId}"
-  }
+  #}
 else
     raise "identify number"
 end
