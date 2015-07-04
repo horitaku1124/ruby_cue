@@ -1,28 +1,43 @@
 #!/bin/sh
 
+RETVAL=0
 service=/usr/local/bin/ruby_cue/cue_start.sh
-pidfile=/tmp/rubycue.pid
+process_name=$(basename $service)
+lockfile="/var/lock/subsys/${process_name}"
+pidfile="/var/run/${process_name}.pid"
 
 . /etc/init.d/functions
 
+start() {
+  echo "starting ruby_cue..."
+  daemon $service $pidfile
+  RETVAL=$?
+  return $RETVAL
+}
+
+stop() {
+  echo "stopping ruby_cue..."
+  killproc -p $pidfile $service
+  RETVAL=$?
+  rm -f $pidfile
+  return $RETVAL
+}
+
+rh_status() {
+  status -p ${pidfile} $service
+  RETVAL=$?
+}
+
 case "$1" in
   start)
-#     $service $pidfile
-#     RETVAL=$?
-     daemon $service
-     echo "Started service"
-     ;;
+    start
+    ;;
   stop)
-     kill `cat $pidfile`
-#     RETVAL=$?
-#     rm -f $pidfile
-     killproc $service
-     echo "Stopped service"
-     ;;
+    stop
+    ;;
   status)
-     status -p ${pidfile} $service
-     RETVAL=$?
-     ;;
+    rh_status
+    ;;
   *)
      echo "Usage: $0 {start|stop|status}"
      exit 1
