@@ -12,6 +12,7 @@ start() {
   echo "starting ruby_cue..."
   daemon $service $pidfile
   RETVAL=$?
+  [ $RETVAL = 0 ] && touch $lockfile
   return $RETVAL
 }
 
@@ -19,7 +20,7 @@ stop() {
   echo "stopping ruby_cue..."
   killproc -p $pidfile $service
   RETVAL=$?
-  rm -f $pidfile
+  [ $RETVAL = 0 ] && rm -f $lockfile $pidfile
   return $RETVAL
 }
 
