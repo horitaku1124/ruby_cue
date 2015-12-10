@@ -1,5 +1,6 @@
 #!/bin/sh
 
+USER=rubycue
 RETVAL=0
 service=/usr/local/bin/ruby_cue/cue_start.sh
 process_name=$(basename $service)
@@ -10,7 +11,9 @@ pidfile="/var/run/${process_name}.pid"
 
 start() {
   echo "starting ruby_cue..."
-  daemon $service $pidfile
+  touch $pidfile
+  chown $USER:$USER $pidfile
+  daemon $service $pidfile $USER
   RETVAL=$?
   [ $RETVAL = 0 ] && touch $lockfile
   return $RETVAL
