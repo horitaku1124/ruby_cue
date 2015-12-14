@@ -9,6 +9,7 @@ PORT = 20000
 
 skip = 0
 filePath = nil
+arguments = []
 exeAt = nil
 ARGV.length.times do |i|
   if skip > 0 then
@@ -21,9 +22,19 @@ ARGV.length.times do |i|
     mode = $1.downcase
 
     case mode
-    when "f"
+    when "a" # Some aruguments here.
+      arguments << ARGV[i + 1]
+      skip = 1
+    when "f" # Specify the location
       filePath = ARGV[i + 1]
       skip = 1
+    when "t" # When que is fired
+      if ARGV[i + 1] =~ /\A\d{10}\z/
+        exeAt = ARGV[i + 1]
+        skip = 1
+      else
+        raise "Illegal -t parameter."
+      end
     else
       raise "-#{mode} is undefined"
     end
@@ -35,22 +46,24 @@ ARGV.length.times do |i|
 end
 
 if filePath && exeAt
-  puts "ok"
+  # puts "ok"
   sock = nil
   begin
     #Timeout.timeout(2, Timeout::Error) {
       sock = TCPSocket.open(HOST, PORT)
-      sock.puts "POST 20#{exeAt}00 #{filePath}"
-      puts 'sock.get'
+      args = arguments.join(" ")
+      sock.puts "POST 20#{exeAt}00 #{filePath} #{args}"
+      # puts 'sock.get'
       res = sock.gets
       puts res
     #}
   rescue => e
-    puts "timed out"
+    STDERR.puts e.message
+    STDERR.puts "socket error"
   ensure
     if sock
       sock.close
-      p "closed"
+      # p "closed"
     end
   end
 elsif !filePath
