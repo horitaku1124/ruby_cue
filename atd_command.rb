@@ -29,7 +29,7 @@ ARGV.length.times do |i|
       filePath = ARGV[i + 1]
       skip = 1
     when "t" # When que is fired
-      if ARGV[i + 1] =~ /\A\d{10}\z/
+      if ARGV[i + 1] =~ /\A\d{10}(\.\d{2})?\z/
         exeAt = ARGV[i + 1]
         skip = 1
       else
@@ -38,7 +38,7 @@ ARGV.length.times do |i|
     else
       raise "-#{mode} is undefined"
     end
-  elsif option =~ /\A\d{10}\z/
+  elsif option =~ /\A\d{10}(\.\d{2})?\z/
     exeAt = option
   else
     raise "unrecognized option => #{option}"
@@ -52,7 +52,11 @@ if filePath && exeAt
     #Timeout.timeout(2, Timeout::Error) {
       sock = TCPSocket.open(HOST, PORT)
       args = arguments.join(" ")
-      sock.puts "POST 20#{exeAt}00 #{filePath} #{args}"
+      exeAt = exeAt.sub(".", "")
+      if exeAt.length == 10
+        exeAt = exeAt + "00"
+      end
+      sock.puts "POST 20#{exeAt} #{filePath} #{args}"
       # puts 'sock.get'
       res = sock.gets
       puts res
