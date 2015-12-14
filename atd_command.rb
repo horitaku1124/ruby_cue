@@ -43,7 +43,7 @@ if filePath && exeAt
       sock.puts "POST 20#{exeAt}00 #{filePath}"
       puts 'sock.get'
       res = sock.gets
-      p res
+      puts res
     #}
   rescue => e
     puts "timed out"
