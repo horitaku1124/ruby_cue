@@ -35,7 +35,7 @@ class CueServer
             filePath = $3
             task = CueTask.new(timeStr, filePath)
             task.id = worker.addTask(task)
-            sock.puts "job at #{task.id}"
+            sock.puts "job #{task.id} at #{timeStr}"
             puts "*added."
             break
           elsif command =~ /\A(GET)\z/
