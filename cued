@@ -8,6 +8,7 @@ lockfile="/var/lock/subsys/${process_name}"
 pidfile="/var/run/${process_name}.pid"
 
 . /etc/init.d/functions
+# . /lib/lsb/init-functions
 
 start() {
   printf "starting ruby_cue..."
