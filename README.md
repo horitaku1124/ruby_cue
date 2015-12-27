@@ -8,6 +8,7 @@ How to install
     $ chown rubycue. /var/log/ruby_cue
     $ cp cued /etc/init.d/
     $ chmod +x /usr/local/bin/ruby_cue/cue_start.sh
+    $ mkdir /var/lock/subsys
 
 How to start
 
